@@ -83,8 +83,13 @@ extensions = [
     'sphinx.ext.extlinks', # Enables arbitrary link shorthand like 'github'
 ]
 
+# Config for the extlinks extension
 extlinks = {'github': ('https://github.com/google/aiyprojects-raspbian/tree/aiyprojects/%s',
-                      '')}
+                       ''),
+            'assistant': ('https://developers.google.com/assistant/sdk/reference/library/python/#%s',
+                          ''),
+            'assistant-rpc': ('https://developers.google.com/assistant/sdk/reference/rpc/#%s',
+                          '')}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -112,7 +117,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'README*']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None

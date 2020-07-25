@@ -1,3 +1,17 @@
+# Copyright 2018 Google Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """
 GPIO pin definitions for the Vision Bonnet and Voice Bonnet, for use with
 `gpiozero APIs <https://gpiozero.readthedocs.io/en/stable/>`_.
@@ -464,7 +478,7 @@ class DebouncingPoller:
 
 
 class HatPin(Pin):
-    """A Pin implemenation that supports pins controlled by the hat's MCU.
+    """A Pin implementation that supports pins controlled by the hat's MCU.
 
     Only one HatPin should exist at a given time for a given pin system wide.
     Behavior is completely unpredictable if more than one pin exists concurrently.
@@ -481,6 +495,7 @@ class HatPin(Pin):
 
     def __init__(self, spec, pwm=False):
         super(HatPin, self).__init__()
+        self.spec = spec
         self.gpio_pin = None
         self.pwm_pin = None
         self.pwm_active = False
@@ -497,6 +512,10 @@ class HatPin(Pin):
         self._set_bounce(.001)
         # Start out with gpio enabled for compatibility.
         self._enable_gpio()
+
+    @property
+    def number(self):
+        return self.spec
 
     def _enable_pwm(self):
         if self._closed:
@@ -650,6 +669,12 @@ class HybridFactory(Factory):
             'No registered factory was able to construct a pin for the given '
             'specification')
 
+    def ticks(self):
+        return time.monotonic()
+
+    def ticks_diff(self, later, earlier):
+        return max(0, later - earlier)
+
 
 class HatFactory(Factory):
     """Factory for pins accessed through the hat's MCU."""
@@ -677,4 +702,4 @@ class HatFactory(Factory):
 # This overrides the default factory being used by all gpiozero devices. It will
 # defer to the previous default for all non-hat pins.
 hat_factory = HatFactory()
-Device.pin_factory = HybridFactory(hat_factory, Device.pin_factory)
+Device.pin_factory = HybridFactory(hat_factory, Device._default_pin_factory())
